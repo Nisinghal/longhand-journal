@@ -1,0 +1,367 @@
+<title>Five Ways to Draw a Day</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500&display=swap">
+
+<style>
+  :root{
+    --paper:#FBFAF7; --paper-2:#F3F1EA; --ink:#1B1A21; --ink-2:#57545F;
+    --ink-3:#8B8794; --rule:#E4E0D6; --hollow:#E7E3D9;
+    --mark-l:0.50; --mark-c:0.088;
+    --wash-l:0.905; --wash-c:0.050;
+    --serif:"Newsreader","Iowan Old Style",Georgia,serif;
+    --display:"Instrument Serif","Newsreader",Georgia,serif;
+    --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#121216; --paper-2:#1A1A20; --ink:#EDEBF2; --ink-2:#A7A3B0;
+      --ink-3:#74707E; --rule:#2A2933; --hollow:#2C2A36;
+      --mark-l:0.745; --mark-c:0.078;
+      --wash-l:0.375; --wash-c:0.052;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#121216; --paper-2:#1A1A20; --ink:#EDEBF2; --ink-2:#A7A3B0;
+    --ink-3:#74707E; --rule:#2A2933; --hollow:#2C2A36;
+    --mark-l:0.745; --mark-c:0.078;
+    --wash-l:0.375; --wash-c:0.052;
+  }
+
+  *{box-sizing:border-box}
+  body{
+    background:var(--paper); color:var(--ink); margin:0;
+    font-family:var(--serif); font-weight:300; font-size:1.0625rem; line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+    padding:clamp(2.5rem,7vw,5rem) clamp(1.25rem,5vw,3rem) 5rem;
+  }
+  .col{max-width:62ch;margin-inline:auto}
+  .wide{max-width:1000px;margin-inline:auto}
+
+  .eyebrow{
+    font-family:var(--mono);font-size:.6875rem;font-weight:500;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--ink-3);margin:0 0 1.1rem;
+  }
+  h1{
+    font-family:var(--display);font-weight:400;font-size:clamp(2.8rem,7.5vw,4.6rem);
+    line-height:.98;letter-spacing:-.015em;margin:0 0 .6rem;text-wrap:balance;
+  }
+  h1 em{font-style:italic;color:var(--ink-2)}
+  .deck{font-size:clamp(1.125rem,2.3vw,1.3rem);color:var(--ink-2);margin:0;text-wrap:pretty}
+  p{margin:0 0 1.1rem;text-wrap:pretty}
+  strong{font-weight:500}
+  code{font-family:var(--mono);font-size:.8125rem}
+
+  .opt{
+    max-width:1000px;margin:clamp(3.5rem,8vw,5.5rem) auto 0;
+    padding-top:clamp(2rem,4vw,2.75rem);border-top:1px solid var(--rule);
+  }
+  .opt__head{display:flex;align-items:baseline;gap:1rem;flex-wrap:wrap;margin-bottom:.5rem}
+  .opt__n{
+    font-family:var(--mono);font-size:.6875rem;font-weight:500;letter-spacing:.14em;
+    color:var(--ink-3);
+  }
+  .opt__name{
+    font-family:var(--display);font-weight:400;font-size:clamp(1.7rem,3.6vw,2.2rem);
+    line-height:1.1;letter-spacing:-.01em;margin:0;
+  }
+  .opt__body{max-width:60ch;color:var(--ink-2);margin:0 0 2rem}
+  .opt__body strong{color:var(--ink)}
+
+  .lay{display:grid;grid-template-columns:1fr;gap:2rem}
+  @media(min-width:860px){.lay{grid-template-columns:minmax(240px,320px) 1fr;gap:2.75rem;align-items:start}}
+
+  .card{background:var(--paper-2);border:1px solid var(--rule);border-radius:2px;padding:1.25rem}
+  .cap{
+    font-family:var(--mono);font-size:.5625rem;letter-spacing:.11em;text-transform:uppercase;
+    color:var(--ink-3);margin:0 0 1rem;
+  }
+  .detail{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;text-align:center}
+  .detail svg{width:100%;height:auto;display:block}
+  .detail span{
+    font-family:var(--mono);font-size:.5rem;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--ink-3);display:block;margin-top:.6rem;
+  }
+  .mgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+  .mgrid svg,.sgrid svg{width:100%;height:auto;display:block}
+  .sgrid{display:flex;flex-direction:column;gap:3px}
+  .dow{
+    font-family:var(--mono);font-size:.5rem;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--ink-3);text-align:center;padding-bottom:.3rem;
+  }
+
+  .mark{stroke:oklch(var(--mark-l) var(--mark-c) var(--h));fill:none;
+        stroke-linecap:round;stroke-linejoin:round}
+  .wash{fill:oklch(var(--wash-l) var(--wash-c) var(--h));stroke:none}
+  .dot{fill:oklch(var(--mark-l) var(--mark-c) var(--h));stroke:none}
+  .hollow{stroke:var(--hollow);fill:none;stroke-dasharray:2 3}
+
+  .cost{
+    font-family:var(--mono);font-size:.6875rem;line-height:1.75;color:var(--ink-3);
+    margin:1.5rem 0 0;padding-left:.9rem;border-left:2px solid var(--rule);
+  }
+  .cost b{color:var(--ink-2);font-weight:500}
+
+  .rec{
+    max-width:1000px;margin:clamp(3.5rem,8vw,5.5rem) auto 0;
+    padding-top:clamp(2rem,4vw,2.75rem);border-top:1px solid var(--rule);
+  }
+  .recgrid{display:grid;gap:1.5rem;margin-top:1.5rem}
+  @media(min-width:720px){.recgrid{grid-template-columns:1fr 1fr}}
+  .note{border-top:1px solid var(--rule);padding-top:.9rem}
+  .note h3{
+    font-family:var(--mono);font-size:.6875rem;font-weight:500;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--ink-3);margin:0 0 .5rem;
+  }
+  .note p{font-size:.9375rem;line-height:1.6;margin:0;color:var(--ink-2)}
+
+  @media(prefers-reduced-motion:no-preference){
+    .opt,.rec{animation:up .6s cubic-bezier(.2,.7,.3,1) both}
+  }
+  @keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+</style>
+
+<header class="col">
+  <p class="eyebrow">Mood system &middot; draft 02</p>
+  <h1>Five ways to <em>draw</em> a day</h1>
+  <p class="deck">The colour field encoded the data and none of the feeling. A flat fill is a dashboard cell; this app is about handwriting and attention, so the mark should look made rather than computed.</p>
+</header>
+
+<section class="col" style="margin-top:2.5rem">
+  <p>Colour still does the same work &mdash; valence moves the hue along the dawn arc from the last draft. What changes is that <strong>energy is now carried by drawn form</strong>: how open the flower is, how tall the stem, how dense the scrawl. Two channels instead of one, and the second one is handmade.</p>
+  <p>Every mark below is generated from the same <code>(valence, energy, seed)</code> your entries already produce, so the month is deterministic &mdash; the same day always draws the same way &mdash; but no two days are identical. All five run on the same data. Pick one and I will build the composer's mood picker as that mark, live under your thumb.</p>
+</section>
+
+<div id="board"></div>
+
+<section class="rec">
+  <h2 class="opt__name" style="margin-bottom:.75rem">Where I'd go</h2>
+  <p style="max-width:60ch;color:var(--ink-2)"><strong style="color:var(--ink)">Bloom</strong> if you want the app to be loved and screenshotted &mdash; it is the most distinctive thing on this page and it is your instinct, drawn out. <strong style="color:var(--ink)">Scrawl</strong> if you want it to be respected: it is the only one where a month genuinely looks like a page you wrote, and it never risks reading as decoration. <strong style="color:var(--ink)">Stitch</strong> is the sleeper &mdash; it is the only mark that makes the week continuous rather than 30 separate objects, which is closer to how a week actually feels.</p>
+  <div class="recgrid">
+    <div class="note">
+      <h3>What I'd avoid</h3>
+      <p>Mixing two. The mark is the app's signature; two systems reads as indecision, and the mood picker can only teach one language.</p>
+    </div>
+    <div class="note">
+      <h3>The picker follows the mark</h3>
+      <p>Whichever wins, the composer's mood input becomes that mark growing under your thumb &mdash; drag up for energy, across for valence, and the flower opens or the stem climbs as you go.</p>
+    </div>
+    <div class="note">
+      <h3>Still true from draft 01</h3>
+      <p>Hue arc unchanged, chroma still capped, no red. Skipped days stay hollow. Colour never carries meaning alone &mdash; every mark keeps its text label.</p>
+    </div>
+    <div class="note">
+      <h3>Cost</h3>
+      <p>All five are <code>react-native-svg</code> paths generated on the fly &mdash; no image assets, no shaders. A month is 30&ndash;35 small paths, which renders fine. Scrawl is the heaviest at roughly 8 paths a day.</p>
+    </div>
+  </div>
+</section>
+
+<script>
+(function(){
+  var HUE=[268,243,152,85,40];
+  var VAL=["Heavy","Muted","Even","Warm","Bright"];
+  var ENE=["Spent","Slow","Steady","Lively","Charged"];
+
+  function mulberry(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+  function n(x){return Math.round(x*100)/100;}
+
+  /* ---------- 1. BLOOM ---------- */
+  function bloom(v,e,seed){
+    var r=mulberry(seed),cx=20,cy=20,out="";
+    if(e===1){
+      var w=3.6+r()*0.7, botB=25.5, topB=9.5;
+      var d="M20 "+botB+" C"+n(20-w)+" "+n(botB-3.5)+", "+n(20-w*0.92)+" "+n(topB+3.5)+", 20 "+topB
+           +" C"+n(20+w*0.92)+" "+n(topB+3.5)+", "+n(20+w)+" "+n(botB-3.5)+", 20 "+botB+"Z";
+      out+='<path class="wash" d="'+d+'"/>';
+      out+='<path class="mark" stroke-width="1.05" d="'+d+'"/>';
+      out+='<path class="mark" stroke-width="1" d="M20 '+n(botB-0.5)+' L20 31.5"/>';
+      out+='<path class="mark" stroke-width=".9" opacity=".6" d="M20 '+n(topB+5)+' L20 '+n(botB-2)+'"/>';
+      return out;
+    }
+    var petals=2+Math.round((e-1)*1.5),R=5.2+e*1.95,washes="",strokes="";
+    for(var i=0;i<petals;i++){
+      var a=i/petals*Math.PI*2+(r()-0.5)*0.22-Math.PI/2;
+      var rr=R+(r()-0.5)*1.8;
+      var tx=cx+Math.cos(a)*rr, ty=cy+Math.sin(a)*rr;
+      var c1x=cx+Math.cos(a-0.62)*rr*0.72, c1y=cy+Math.sin(a-0.62)*rr*0.72;
+      var c2x=cx+Math.cos(a+0.62)*rr*0.72, c2y=cy+Math.sin(a+0.62)*rr*0.72;
+      var d="M"+cx+" "+cy+" Q"+n(c1x)+" "+n(c1y)+" "+n(tx)+" "+n(ty)+" Q"+n(c2x)+" "+n(c2y)+" "+cx+" "+cy+"Z";
+      washes+='<path class="wash" d="'+d+'"/>';
+      strokes+='<path class="mark" stroke-width="'+n(0.85+e*0.06)+'" d="'+d+'"/>';
+    }
+    return washes+strokes+'<circle class="dot" cx="20" cy="20" r="'+n(1.1+e*0.16)+'"/>';
+  }
+
+  /* ---------- 2. SPRIG ---------- */
+  function sprig(v,e,seed){
+    var r=mulberry(seed);
+    var h=7.5+e*4.3, topY=34-h, lean=(v-3)*2.7+(r()-0.5)*1.4;
+    var p0=[20,34],p1=[20+lean*1.5,34-h*0.55],p2=[20+lean,topY];
+    function at(t){var u=1-t;return[u*u*p0[0]+2*u*t*p1[0]+t*t*p2[0],u*u*p0[1]+2*u*t*p1[1]+t*t*p2[1]];}
+    var out='<path class="mark" stroke-width="1.15" d="M20 34 Q'+n(p1[0])+' '+n(p1[1])+' '+n(p2[0])+' '+n(topY)+'"/>';
+    var leaves=Math.max(1,Math.min(4,e));
+    for(var i=0;i<leaves;i++){
+      var t=0.24+i*(0.52/Math.max(1,leaves-1||1));
+      if(leaves===1)t=0.45;
+      var p=at(t),side=(i%2?1:-1),L=2.6+e*0.75;
+      out+='<path class="mark" stroke-width="1" d="M'+n(p[0])+' '+n(p[1])+' Q'+n(p[0]+side*L*0.9)+' '+n(p[1]-L*0.35)+' '+n(p[0]+side*L*1.25)+' '+n(p[1]-L*0.95)+'"/>';
+    }
+    var br=1.05+(v-1)*0.42;
+    out+=(v>=4?'<circle class="dot" ':'<circle class="mark" stroke-width="1" ')+'cx="'+n(p2[0])+'" cy="'+n(topY)+'" r="'+n(br)+'"/>';
+    return out;
+  }
+
+  /* ---------- 3. STITCH (drawn per week, not per day) ---------- */
+  function stitchWeek(days,seed){
+    var r=mulberry(seed),pts=[],i;
+    for(i=0;i<7;i++){
+      var d=days[i];
+      var y=d?20+(3-d[0])*2.6:20;
+      pts.push({x:i*40+20,y:y,d:d});
+    }
+    var path="M0 "+n(pts[0].y);
+    for(i=0;i<7;i++){
+      var p=pts[i],prevX=i===0?0:pts[i-1].x,prevY=i===0?pts[0].y:pts[i-1].y;
+      var amp=p.d?(1.2+p.d[1]*1.7):0;
+      var midX=(prevX+p.x)/2;
+      path+=" C"+n(midX)+" "+n(prevY-amp)+", "+n(midX)+" "+n(p.y-amp)+", "+n(p.x)+" "+n(p.y);
+    }
+    path+=" C"+n(280-10)+" "+n(pts[6].y)+", "+n(280-6)+" "+n(pts[6].y)+", 280 "+n(pts[6].y);
+    var out='<path class="mark" style="--h:243" stroke-width="1.05" opacity=".35" d="'+path+'"/>';
+    for(i=0;i<7;i++){
+      var q=pts[i];
+      if(!q.d){out+='<circle class="hollow" stroke-width="1" cx="'+q.x+'" cy="'+n(q.y)+'" r="2.6"/>';continue;}
+      var kr=1.3+q.d[1]*0.52;
+      out+='<g style="--h:'+HUE[q.d[0]-1]+'">';
+      out+='<circle class="dot" cx="'+q.x+'" cy="'+n(q.y)+'" r="'+n(kr)+'"/>';
+      var tick=2+q.d[1]*1.1;
+      out+='<path class="mark" stroke-width="1.4" d="M'+n(q.x-tick)+' '+n(q.y+ (3-q.d[0])*0.5)+' L'+n(q.x+tick)+' '+n(q.y-(3-q.d[0])*0.5)+'"/>';
+      out+='</g>';
+    }
+    return out;
+  }
+
+  /* ---------- 4. BLEED ---------- */
+  function bleed(v,e,seed){
+    var r=mulberry(seed),cx=20,cy=20,N=11,R=4.6+e*2.05,pts=[],i;
+    for(i=0;i<N;i++){
+      var a=i/N*Math.PI*2;
+      var rr=R*(1+(r()-0.5)*(0.16+e*0.052));
+      pts.push([cx+Math.cos(a)*rr,cy+Math.sin(a)*rr]);
+    }
+    var d="M"+n(pts[0][0])+" "+n(pts[0][1]);
+    for(i=1;i<=N;i++){
+      var p=pts[i%N],pv=pts[(i-1)%N];
+      d+=" Q"+n(pv[0]+(p[0]-pv[0])*0.5+(r()-0.5)*2.2)+" "+n(pv[1]+(p[1]-pv[1])*0.5+(r()-0.5)*2.2)+" "+n(p[0])+" "+n(p[1]);
+    }
+    d+="Z";
+    var out='<path class="wash" d="'+d+'"/><path class="mark" stroke-width=".8" opacity=".55" d="'+d+'"/>';
+    var spots=Math.max(0,e-2);
+    for(i=0;i<spots;i++){
+      var a2=r()*Math.PI*2,dd=R*(1.15+r()*0.35);
+      out+='<circle class="wash" cx="'+n(cx+Math.cos(a2)*dd)+'" cy="'+n(cy+Math.sin(a2)*dd)+'" r="'+n(0.6+r()*0.9)+'"/>';
+    }
+    return out;
+  }
+
+  /* ---------- 5. SCRAWL ---------- */
+  function scrawl(v,e,seed){
+    var r=mulberry(seed),lines=1+Math.round((e-1)*0.85),out="",i;
+    var top=20-(lines-1)*3.7;
+    for(i=0;i<lines;i++){
+      var y=top+i*7.4;
+      var x0=6.5+r()*1.8, x1=33.5-r()*(1.5+ (i===lines-1?10:0));
+      var drift=(3-v)*0.85;
+      var d="M"+n(x0)+" "+n(y+drift*0.3);
+      var segs=3+Math.round(e*0.55),w=(x1-x0)/segs;
+      for(var s=0;s<segs;s++){
+        var sx=x0+w*(s+1);
+        var cy1=y-1.05-r()*(0.35+e*0.2), cy2=y+0.95+r()*(0.35+e*0.2);
+        d+=" C"+n(sx-w*0.66)+" "+n(cy1+drift)+", "+n(sx-w*0.33)+" "+n(cy2+drift)+", "+n(sx)+" "+n(y+drift*0.3);
+      }
+      out+='<path class="mark" stroke-width="'+n(0.9+e*0.055)+'" opacity="'+n(0.72+i*0.06)+'" d="'+d+'"/>';
+    }
+    return out;
+  }
+
+  /* ---------- data ---------- */
+  var DAYS=[null,null,[3,3],[2,2],[3,4],[4,4],[2,1],
+            [2,2],[3,3],[3,2],[1,1],[2,2],[4,3],[5,5],
+            [4,4],[3,3],null,[2,2],[2,1],[3,3],[4,4],
+            [5,4],[4,5],[3,3],[2,2],null,[3,2],[3,3],
+            [4,4],[4,3],[3,3],[2,2],[3,4],[4,4],[5,5]];
+  var DOW=["M","T","W","T","F","S","S"];
+
+  var OPTS=[
+    {id:"bloom",name:"Bloom",fn:bloom,
+     premise:"Your instinct, drawn out. Petal count and openness come from energy — a spent day is a closed bud, a charged day throws six or seven petals. Hue is valence, so a heavy day blooms indigo and a bright one blooms clay.",
+     cost:["<b>Reads as</b> a garden of the month, no two flowers alike","<b>Risk</b> the closest of the five to twee — it lives or dies on stroke quality","<b>Legibility</b> energy is instant; valence needs the colour"]},
+    {id:"sprig",name:"Sprig",fn:sprig,
+     premise:"The restrained cousin. One stem per day: height is energy, the lean is valence — heavy days bend left and low, bright days reach right and up. Leaves accumulate with energy, and the bud fills in on the warm end of the arc.",
+     cost:["<b>Reads as</b> a row of seedlings, height scannable across a week","<b>Risk</b> quiet enough that a flat month looks sparse","<b>Legibility</b> the strongest — two channels visible with no colour at all"]},
+    {id:"stitch",name:"Stitch",fn:null,week:stitchWeek,
+     premise:"The only one that refuses to treat days as separate objects. A single thread runs across each week; the knot sits high on bright days and sags on heavy ones, and its size is energy. A skipped day is a gap in the seam.",
+     cost:["<b>Reads as</b> one continuous week, not seven boxes","<b>Risk</b> needs neighbour awareness — the only one that can't render a day in isolation","<b>Legibility</b> trend over a week beats any of the others"]},
+    {id:"bleed",name:"Bleed",fn:bleed,
+     premise:"Ink soaking into paper. Energy sets how far the blot spreads and how ragged the edge gets; high-energy days throw satellite spots. The closest thing to the original swatch, but wet — it keeps the quilt density and loses the spreadsheet.",
+     cost:["<b>Reads as</b> a page that has been written on and closed too soon","<b>Risk</b> the least distinctive — nearest to a plain filled cell","<b>Legibility</b> best mass-reading of a whole year at small sizes"]},
+    {id:"scrawl",name:"Scrawl",fn:scrawl,
+     premise:"A day as an illegible line of your own handwriting. Line count and stroke density are energy; the baseline drifts down on heavy days and lifts on bright ones. A month of entries looks like a page you actually filled.",
+     cost:["<b>Reads as</b> writing — the most on-concept of the five","<b>Risk</b> heaviest to draw, ~8 paths a day","<b>Legibility</b> volume reads instantly; valence is subtle without colour"]}
+  ];
+
+  function svgWrap(inner,h,size){
+    return '<svg viewBox="0 0 40 40" style="--h:'+h+'" aria-hidden="true">'+inner+'</svg>';
+  }
+
+  function detail(o){
+    var samples=[[2,1],[3,3],[5,5]],out='<div class="detail">';
+    samples.forEach(function(s,i){
+      var inner;
+      if(o.week){
+        var wk=[null,null,null,s,null,null,null];
+        inner='<svg viewBox="100 0 80 40" aria-hidden="true">'+o.week(wk,7+i)+'</svg>';
+        out+='<div>'+inner+'<span>'+ENE[s[1]-1]+'</span></div>';
+        return;
+      }
+      inner=svgWrap(o.fn(s[0],s[1],11+i*7),HUE[s[0]-1]);
+      out+='<div>'+inner+'<span>'+ENE[s[1]-1]+'</span></div>';
+    });
+    return out+'</div>';
+  }
+
+  function month(o){
+    var out="",i;
+    if(o.week){
+      out='<div class="mgrid" style="margin-bottom:3px">';
+      for(i=0;i<7;i++)out+='<div class="dow">'+DOW[i]+'</div>';
+      out+='</div><div class="sgrid">';
+      for(i=0;i<5;i++){
+        out+='<svg viewBox="0 0 280 40" aria-hidden="true">'+o.week(DAYS.slice(i*7,i*7+7),100+i)+'</svg>';
+      }
+      return out+'</div>';
+    }
+    out='<div class="mgrid">';
+    for(i=0;i<7;i++)out+='<div class="dow">'+DOW[i]+'</div>';
+    DAYS.forEach(function(d,j){
+      if(!d){out+='<svg viewBox="0 0 40 40" aria-hidden="true"><circle class="hollow" stroke-width="1" cx="20" cy="20" r="7"/></svg>';return;}
+      out+='<svg viewBox="0 0 40 40" style="--h:'+HUE[d[0]-1]+'" role="img" aria-label="'+VAL[d[0]-1]+', '+ENE[d[1]-1]+'">'+o.fn(d[0],d[1],j*13+7)+'</svg>';
+    });
+    return out+'</div>';
+  }
+
+  var board=document.getElementById("board"),html="";
+  OPTS.forEach(function(o,i){
+    html+='<section class="opt" style="animation-delay:'+(i*60)+'ms">'
+        +'<div class="opt__head"><span class="opt__n">0'+(i+1)+'</span><h2 class="opt__name">'+o.name+'</h2></div>'
+        +'<p class="opt__body">'+o.premise+'</p>'
+        +'<div class="lay">'
+        +'<div class="card"><p class="cap">The mark, enlarged</p>'+detail(o)
+        +'<p class="cost">'+o.cost.join('<br>')+'</p></div>'
+        +'<div class="card"><p class="cap">March &middot; 31 entries</p>'+month(o)+'</div>'
+        +'</div></section>';
+  });
+  board.innerHTML=html;
+})();
+</script>

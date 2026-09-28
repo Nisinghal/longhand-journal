@@ -1,0 +1,333 @@
+<title>Longhand Composer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500&display=swap">
+
+<style>
+  :root{
+    --page:#EFEDE7; --page-ink:#1B1A21; --page-ink-2:#57545F; --page-ink-3:#8B8794; --page-rule:#DCD8CE;
+    --serif:"Newsreader","Iowan Old Style",Georgia,serif;
+    --display:"Instrument Serif","Newsreader",Georgia,serif;
+    --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --page:#0C0C0F; --page-ink:#EDEBF2; --page-ink-2:#A7A3B0; --page-ink-3:#74707E; --page-rule:#25242D;
+    }
+  }
+  :root[data-theme="dark"]{
+    --page:#0C0C0F; --page-ink:#EDEBF2; --page-ink-2:#A7A3B0; --page-ink-3:#74707E; --page-rule:#25242D;
+  }
+
+  /* The phone's own palette is set by the device toggle, not by the host theme. */
+  .device[data-mode="light"]{
+    --paper:#FBFAF7; --paper-2:#F3F1EA; --ink:#1B1A21; --ink-2:#57545F;
+    --ink-3:#8B8794; --rule:#E4E0D6; --hollow:#E7E3D9;
+    --mark-l:0.50; --mark-c:0.088; --wash-l:0.905; --wash-c:0.050;
+  }
+  .device[data-mode="dark"]{
+    --paper:#121216; --paper-2:#1A1A20; --ink:#EDEBF2; --ink-2:#A7A3B0;
+    --ink-3:#74707E; --rule:#2A2933; --hollow:#2C2A36;
+    --mark-l:0.745; --mark-c:0.078; --wash-l:0.375; --wash-c:0.052;
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0;background:var(--page);color:var(--page-ink);
+    font-family:var(--serif);font-weight:300;font-size:1rem;line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    padding:clamp(2rem,5vw,3.5rem) clamp(1rem,4vw,2.5rem) 4rem;
+  }
+
+  .head{max-width:1040px;margin:0 auto clamp(2rem,4vw,3rem)}
+  .eyebrow{
+    font-family:var(--mono);font-size:.6875rem;font-weight:500;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--page-ink-3);margin:0 0 .9rem;
+  }
+  h1{
+    font-family:var(--display);font-weight:400;font-size:clamp(2.4rem,6vw,3.6rem);
+    line-height:1;letter-spacing:-.015em;margin:0 0 .5rem;
+  }
+  h1 em{font-style:italic;color:var(--page-ink-2)}
+  .deck{color:var(--page-ink-2);margin:0;max-width:54ch;font-size:1.0625rem}
+
+  .stage{
+    max-width:1040px;margin:0 auto;display:grid;grid-template-columns:1fr;gap:2.5rem;
+  }
+  @media(min-width:900px){.stage{grid-template-columns:390px 1fr;gap:3.5rem;align-items:start}}
+
+  .controls{display:flex;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap}
+  .ctl{
+    font-family:var(--mono);font-size:.625rem;font-weight:500;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--page-ink-2);background:transparent;
+    border:1px solid var(--page-rule);border-radius:2px;padding:.5rem .75rem;cursor:pointer;
+    transition:border-color .2s,color .2s;
+  }
+  .ctl:hover{border-color:var(--page-ink-3);color:var(--page-ink)}
+  .ctl[aria-pressed="true"]{border-color:var(--page-ink);color:var(--page-ink)}
+  .ctl:focus-visible{outline:2px solid var(--page-ink);outline-offset:2px}
+
+  /* ---------- the phone ---------- */
+  .device{
+    width:390px;max-width:100%;height:770px;background:var(--paper);color:var(--ink);
+    border-radius:34px;border:1px solid var(--rule);overflow:hidden;
+    display:flex;flex-direction:column;position:relative;
+    box-shadow:0 24px 60px -30px rgba(0,0,0,.4);
+  }
+  .screen{flex:1;display:flex;flex-direction:column;padding:44px 24px 0;overflow:hidden}
+  .date{
+    font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;
+    color:var(--ink-3);margin:0;
+  }
+  .prompt{
+    font-family:var(--display);font-style:italic;font-size:25px;line-height:1.28;
+    color:var(--ink-2);margin:20px 0 32px;transition:opacity .42s ease;
+  }
+  .prompt.dim{opacity:.42}
+  .field{
+    flex:1;border:0;background:transparent;resize:none;outline:none;padding:0;
+    font-family:"Newsreader",Georgia,serif;font-weight:300;font-size:19px;line-height:33px;
+    color:var(--ink);min-height:120px;
+  }
+  .field::placeholder{color:var(--ink-3)}
+  .meta{
+    font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;
+    color:var(--ink-3);margin:0;padding:16px 0;min-height:14px;
+    opacity:0;transition:opacity .3s ease;
+  }
+  .meta.on{opacity:1}
+
+  .dock{padding:0 24px 22px}
+  .pad{
+    width:232px;height:232px;margin:0 auto;position:relative;
+    display:flex;align-items:center;justify-content:center;touch-action:none;cursor:grab;
+  }
+  .pad:active{cursor:grabbing}
+  .lattice{
+    position:absolute;inset:26px;display:flex;flex-direction:column;justify-content:space-between;
+    opacity:0;transition:opacity .25s ease;pointer-events:none;
+  }
+  .lattice.on{opacity:.9}
+  .lrow{display:flex;justify-content:space-between}
+  .ldot{width:3px;height:3px;border-radius:50%;background:var(--hollow)}
+  #bloom{transition:transform .34s cubic-bezier(.2,1.3,.4,1)}
+  #bloom.pop{transform:scale(1.06)}
+  .moodline{
+    font-family:var(--mono);font-size:10.5px;font-weight:500;letter-spacing:.13em;
+    text-transform:uppercase;color:var(--ink-2);text-align:center;margin:12px 0 0;
+  }
+  .hint{
+    font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;
+    color:var(--ink-3);text-align:center;margin:6px 0 0;height:14px;
+    opacity:.55;transition:opacity .2s ease;
+  }
+  .hint.on{opacity:1}
+
+  .collapsed{
+    display:none;align-items:center;gap:12px;padding:14px 0 4px;
+    border-top:1px solid var(--rule);cursor:pointer;
+  }
+  .device[data-kb="up"] .dock > .pad,
+  .device[data-kb="up"] .dock > .moodline,
+  .device[data-kb="up"] .dock > .hint{display:none}
+  .device[data-kb="up"] .collapsed{display:flex}
+  .keyboard{
+    display:none;height:270px;background:var(--paper-2);border-top:1px solid var(--rule);
+    align-items:center;justify-content:center;
+  }
+  .device[data-kb="up"] .keyboard{display:flex}
+  .keyboard span{
+    font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);
+  }
+
+  .mark{stroke:oklch(var(--mark-l) var(--mark-c) var(--h));fill:none;stroke-linejoin:round;stroke-linecap:round}
+  .wash{fill:oklch(var(--wash-l) var(--wash-c) var(--h));stroke:none}
+  .dot{fill:oklch(var(--mark-l) var(--mark-c) var(--h));stroke:none}
+
+  /* ---------- annotations ---------- */
+  .notes{display:grid;gap:1.75rem}
+  .note{border-top:1px solid var(--page-rule);padding-top:.9rem}
+  .note h3{
+    font-family:var(--mono);font-size:.6875rem;font-weight:500;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--page-ink-3);margin:0 0 .5rem;
+  }
+  .note p{margin:0;font-size:.9375rem;line-height:1.65;color:var(--page-ink-2)}
+  .note code{font-family:var(--mono);font-size:.8125rem;color:var(--page-ink)}
+</style>
+
+<div class="head">
+  <p class="eyebrow">Screen 01 &middot; Today</p>
+  <h1>The <em>composer</em></h1>
+  <p class="deck">Drag inside the pad &mdash; across for valence, up for energy. The bloom opens under your thumb. Type in the field and the prompt greys back; flip the keyboard up to see the picker collapse.</p>
+</div>
+
+<div class="stage">
+  <div>
+    <div class="controls">
+      <button class="ctl" id="t-light" aria-pressed="true">Paper</button>
+      <button class="ctl" id="t-dark" aria-pressed="false">Night</button>
+      <button class="ctl" id="t-kb" aria-pressed="false">Keyboard up</button>
+    </div>
+
+    <div class="device" id="device" data-mode="light" data-kb="down">
+      <div class="screen">
+        <p class="date" id="date">Monday, 8 September</p>
+        <p class="prompt" id="prompt">What did you keep putting off today, and what was underneath it?</p>
+        <textarea class="field" id="field" placeholder="Start anywhere." spellcheck="false"></textarea>
+        <p class="meta" id="meta"></p>
+      </div>
+
+      <div class="dock">
+        <div class="pad" id="pad">
+          <div class="lattice" id="lattice"></div>
+          <svg id="bloom" width="132" height="132" viewBox="0 0 40 40" aria-hidden="true"></svg>
+        </div>
+        <p class="moodline" id="moodline">Even &middot; Steady</p>
+        <p class="hint" id="hint">Heavy ← → Bright &middot; Spent ↓ ↑ Charged</p>
+
+        <div class="collapsed" id="collapsed">
+          <svg id="bloomsmall" width="30" height="30" viewBox="0 0 40 40" aria-hidden="true"></svg>
+          <span class="moodline" id="moodsmall" style="margin:0;color:var(--ink-3)">Even &middot; Steady</span>
+        </div>
+      </div>
+
+      <div class="keyboard"><span>Keyboard</span></div>
+    </div>
+  </div>
+
+  <div class="notes">
+    <div class="note">
+      <h3>The writing is the interface</h3>
+      <p>No card, no border, no toolbar. Newsreader at 19&thinsp;px on 33&thinsp;px leading, one measure, sitting directly on paper. The prompt is Instrument Serif italic and drops to 42% opacity the moment you type &mdash; it opened the door, it doesn't need to stand in it.</p>
+    </div>
+    <div class="note">
+      <h3>The mood input is the mark</h3>
+      <p>Not a slider, not five faces. The same bloom the timeline will draw, growing under your thumb. There are only 25 states, so all 25 geometries are built once at mount and indexed during the drag &mdash; no path maths on the gesture path.</p>
+    </div>
+    <div class="note">
+      <h3>What the drag feels like</h3>
+      <p>The lattice fades in only while you're dragging, so the pad is quiet at rest. Each step crossing fires a spring on the bloom and a selection haptic &mdash; you can set your mood without looking at the label.</p>
+    </div>
+    <div class="note">
+      <h3>It gets out of the way</h3>
+      <p>With the keyboard up the picker collapses to a single line: the bloom at 30&thinsp;px and its two words. Tap it to bring the pad back. The composer never scrolls the writing off screen to make room for a control.</p>
+    </div>
+    <div class="note">
+      <h3>Saving is not a button</h3>
+      <p>Autosave debounced at 800&thinsp;ms, then a whisper in the corner: <code>48 words · Saved on this device</code>. That line is doing double duty &mdash; it is also the privacy promise, repeated quietly every day.</p>
+    </div>
+    <div class="note">
+      <h3>Where it lives</h3>
+      <p><code>app/(tabs)/today.tsx</code> for the screen, <code>src/features/composer/MoodPicker.tsx</code> for the pad, <code>src/theme/marks/bloom.ts</code> for the geometry, <code>src/theme/tokens.ts</code> for every value above.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var HUE=[268,243,152,85,40];
+  var VAL=["Heavy","Muted","Even","Warm","Bright"];
+  var ENE=["Spent","Slow","Steady","Lively","Charged"];
+  var v=3,e=3;
+
+  function mulberry(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+  function n(x){return Math.round(x*100)/100;}
+
+  function bloom(vv,ee,seed){
+    var r=mulberry(seed*2654435761),cx=20,cy=20,out="";
+    if(ee<=1){
+      var w=3.6+r()*0.7,bot=25.5,top=9.5;
+      var d="M20 "+bot+" C"+n(20-w)+" "+n(bot-3.5)+", "+n(20-w*0.92)+" "+n(top+3.5)+", 20 "+top
+           +" C"+n(20+w*0.92)+" "+n(top+3.5)+", "+n(20+w)+" "+n(bot-3.5)+", 20 "+bot+"Z";
+      out+='<path class="wash" d="'+d+'"/><path class="mark" stroke-width="1.05" d="'+d+'"/>';
+      out+='<path class="mark" stroke-width=".95" d="M20 '+n(bot-0.5)+' L20 31.5"/>';
+      out+='<path class="mark" stroke-width=".95" opacity=".6" d="M20 '+n(top+5)+' L20 '+n(bot-2)+'"/>';
+      return out;
+    }
+    var count=2+Math.round((ee-1)*1.5),R=5.2+ee*1.95,w1="",s1="";
+    for(var i=0;i<count;i++){
+      var a=i/count*Math.PI*2+(r()-0.5)*0.22-Math.PI/2;
+      var rr=R+(r()-0.5)*1.8;
+      var tx=cx+Math.cos(a)*rr,ty=cy+Math.sin(a)*rr;
+      var c1x=cx+Math.cos(a-0.62)*rr*0.72,c1y=cy+Math.sin(a-0.62)*rr*0.72;
+      var c2x=cx+Math.cos(a+0.62)*rr*0.72,c2y=cy+Math.sin(a+0.62)*rr*0.72;
+      var d2="M"+cx+" "+cy+" Q"+n(c1x)+" "+n(c1y)+" "+n(tx)+" "+n(ty)+" Q"+n(c2x)+" "+n(c2y)+" "+cx+" "+cy+"Z";
+      w1+='<path class="wash" d="'+d2+'"/>';
+      s1+='<path class="mark" stroke-width="'+n(0.85+ee*0.06)+'" d="'+d2+'"/>';
+    }
+    return w1+s1+'<circle class="dot" cx="20" cy="20" r="'+n(1.1+ee*0.16)+'"/>';
+  }
+
+  /* 25 states, built once — same trick the app uses. */
+  var FIELD=[];
+  for(var a=1;a<=5;a++){FIELD[a]=[];for(var b=1;b<=5;b++)FIELD[a][b]=bloom(a,b,7+a*5+b);}
+
+  var bloomEl=document.getElementById("bloom");
+  var smallEl=document.getElementById("bloomsmall");
+  var moodline=document.getElementById("moodline");
+  var moodsmall=document.getElementById("moodsmall");
+
+  function paint(){
+    var h=HUE[v-1],g=FIELD[v][e];
+    bloomEl.style.setProperty("--h",h); bloomEl.innerHTML=g;
+    smallEl.style.setProperty("--h",h); smallEl.innerHTML=g;
+    var label=VAL[v-1]+" · "+ENE[e-1];
+    moodline.textContent=label; moodsmall.textContent=label;
+  }
+
+  var lat=document.getElementById("lattice"),lhtml="";
+  for(var i=0;i<5;i++){lhtml+='<div class="lrow">';for(var j=0;j<5;j++)lhtml+='<div class="ldot"></div>';lhtml+='</div>';}
+  lat.innerHTML=lhtml;
+
+  var pad=document.getElementById("pad"),hint=document.getElementById("hint"),dragging=false;
+  function step(ratio){return Math.min(5,Math.max(1,Math.round(ratio*4)+1));}
+  function set(ev){
+    var r=pad.getBoundingClientRect();
+    var px=(ev.touches?ev.touches[0].clientX:ev.clientX)-r.left;
+    var py=(ev.touches?ev.touches[0].clientY:ev.clientY)-r.top;
+    var nv=step(px/r.width),ne=step(1-py/r.height);
+    if(nv===v&&ne===e)return;
+    v=nv;e=ne;paint();
+    bloomEl.classList.add("pop");
+    setTimeout(function(){bloomEl.classList.remove("pop");},170);
+    if(navigator.vibrate)navigator.vibrate(4);
+  }
+  function start(ev){dragging=true;lat.classList.add("on");hint.classList.add("on");set(ev);ev.preventDefault();}
+  function move(ev){if(dragging){set(ev);ev.preventDefault();}}
+  function end(){if(!dragging)return;dragging=false;lat.classList.remove("on");hint.classList.remove("on");}
+  pad.addEventListener("mousedown",start); pad.addEventListener("touchstart",start,{passive:false});
+  window.addEventListener("mousemove",move); window.addEventListener("touchmove",move,{passive:false});
+  window.addEventListener("mouseup",end); window.addEventListener("touchend",end);
+
+  var field=document.getElementById("field"),prompt=document.getElementById("prompt"),meta=document.getElementById("meta"),saveT;
+  field.addEventListener("input",function(){
+    var t=field.value.trim();
+    prompt.classList.toggle("dim",t.length>0);
+    var w=t?t.split(/\s+/).length:0;
+    meta.classList.toggle("on",w>0);
+    meta.textContent=w+" "+(w===1?"word":"words");
+    clearTimeout(saveT);
+    saveT=setTimeout(function(){
+      if(w>0)meta.textContent=w+" "+(w===1?"word":"words")+"   ·   Saved on this device";
+    },800);
+  });
+
+  var device=document.getElementById("device");
+  var bl=document.getElementById("t-light"),bd=document.getElementById("t-dark"),bk=document.getElementById("t-kb");
+  bl.onclick=function(){device.dataset.mode="light";bl.setAttribute("aria-pressed","true");bd.setAttribute("aria-pressed","false");};
+  bd.onclick=function(){device.dataset.mode="dark";bd.setAttribute("aria-pressed","true");bl.setAttribute("aria-pressed","false");};
+  bk.onclick=function(){
+    var up=device.dataset.kb==="down";
+    device.dataset.kb=up?"up":"down";
+    bk.setAttribute("aria-pressed",up?"true":"false");
+    bk.textContent=up?"Keyboard down":"Keyboard up";
+  };
+  document.getElementById("collapsed").onclick=function(){bk.click();};
+
+  var D=new Date(),MN=["January","February","March","April","May","June","July","August","September","October","November","December"],
+      DN=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+  document.getElementById("date").textContent=DN[D.getDay()]+", "+D.getDate()+" "+MN[D.getMonth()];
+
+  paint();
+})();
+</script>

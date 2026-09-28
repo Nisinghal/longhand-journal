@@ -1,0 +1,369 @@
+<title>Longhand Mood Field</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300&display=swap">
+
+<style>
+  :root{
+    --paper:#FBFAF7; --paper-2:#F3F1EA; --ink:#1B1A21; --ink-2:#57545F;
+    --ink-3:#8B8794; --rule:#E4E0D6;
+    --serif:"Newsreader","Iowan Old Style",Georgia,serif;
+    --display:"Instrument Serif","Newsreader",Georgia,serif;
+    --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#121216; --paper-2:#1A1A20; --ink:#EDEBF2; --ink-2:#A7A3B0;
+      --ink-3:#74707E; --rule:#2A2933;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#121216; --paper-2:#1A1A20; --ink:#EDEBF2; --ink-2:#A7A3B0;
+    --ink-3:#74707E; --rule:#2A2933;
+  }
+
+  *{box-sizing:border-box}
+  body{
+    background:var(--paper); color:var(--ink);
+    font-family:var(--serif); font-weight:300; font-size:1.0625rem; line-height:1.65;
+    -webkit-font-smoothing:antialiased; margin:0;
+    padding:clamp(2.5rem,7vw,5.5rem) clamp(1.25rem,5vw,3rem) 5rem;
+  }
+  .col{max-width:64ch;margin-inline:auto}
+  .wide{max-width:1060px;margin-inline:auto}
+
+  .eyebrow{
+    font-family:var(--mono); font-size:.6875rem; font-weight:500;
+    letter-spacing:.14em; text-transform:uppercase; color:var(--ink-3);
+    margin:0 0 1.1rem;
+  }
+  h1{
+    font-family:var(--display); font-weight:400;
+    font-size:clamp(3rem,8vw,5rem); line-height:.95; letter-spacing:-.015em;
+    margin:0 0 .6rem; text-wrap:balance;
+  }
+  h1 em{font-style:italic;color:var(--ink-2)}
+  .deck{font-size:clamp(1.125rem,2.4vw,1.3125rem);color:var(--ink-2);margin:0;text-wrap:pretty}
+  h2{
+    font-family:var(--display); font-weight:400; font-size:clamp(1.6rem,3.4vw,2.1rem);
+    line-height:1.15; letter-spacing:-.01em; margin:0 0 .75rem; text-wrap:balance;
+  }
+  p{margin:0 0 1.1rem;text-wrap:pretty}
+  .lede{font-size:1.125rem}
+  strong{font-weight:500}
+  code{font-family:var(--mono);font-size:.875rem}
+
+  section{margin-top:clamp(3.5rem,8vw,6rem)}
+  .rule{border:0;border-top:1px solid var(--rule);margin:clamp(3rem,7vw,5rem) 0 0}
+
+  /* specimen panels: colours below are deliberately fixed, not tokenised */
+  .panels{display:grid;grid-template-columns:1fr;gap:1.25rem;margin-top:2rem}
+  @media(min-width:840px){.panels{grid-template-columns:1fr 1fr;gap:1.5rem}}
+
+  .panel{border-radius:2px;padding:1.5rem 1.5rem 1.25rem;border:1px solid}
+  .panel--paper{background:#FBFAF7;color:#1B1A21;border-color:#E4E0D6}
+  .panel--night{background:#121216;color:#EDEBF2;border-color:#2A2933}
+  .panel__name{
+    font-family:var(--mono);font-size:.6875rem;font-weight:500;letter-spacing:.14em;
+    text-transform:uppercase;opacity:.55;margin:0 0 1.25rem;
+  }
+
+  .grid{display:grid;grid-template-columns:4.4rem repeat(5,1fr);gap:4px;align-items:stretch}
+  .grid__colhead,.grid__rowhead{
+    font-family:var(--mono);font-size:.5625rem;letter-spacing:.09em;text-transform:uppercase;
+    opacity:.5;display:flex;align-items:center;
+  }
+  .grid__colhead{justify-content:center;padding-bottom:.4rem}
+  .grid__rowhead{justify-content:flex-end;padding-right:.6rem;text-align:right}
+  .sw{
+    aspect-ratio:1/1;border-radius:2px;border:0;padding:0;cursor:default;width:100%;
+    transition:transform .3s cubic-bezier(.2,.7,.3,1),box-shadow .3s;
+  }
+  .sw:hover,.sw:focus-visible{transform:scale(1.09);outline:none;position:relative;z-index:2}
+  .panel--paper .sw:focus-visible{box-shadow:0 0 0 2px #FBFAF7,0 0 0 3px #1B1A21}
+  .panel--night .sw:focus-visible{box-shadow:0 0 0 2px #121216,0 0 0 3px #EDEBF2}
+  .readout{
+    font-family:var(--mono);font-size:.6875rem;letter-spacing:.02em;
+    margin:1.15rem 0 0;min-height:1.2em;opacity:.6;
+  }
+
+  .fade .sw{opacity:0;animation:rise .7s cubic-bezier(.2,.7,.3,1) forwards}
+  @keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  @media(prefers-reduced-motion:reduce){
+    .fade .sw{opacity:1;animation:none}
+    .sw{transition:none}
+    .sw:hover,.sw:focus-visible{transform:none}
+  }
+
+  .axis{margin-top:1.75rem}
+  .axis__strip{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
+  .axis__strip div{height:52px;border-radius:2px}
+  .axis__keys{
+    display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-top:.5rem;
+    font-family:var(--mono);font-size:.5625rem;letter-spacing:.09em;text-transform:uppercase;
+    color:var(--ink-3);text-align:center;
+  }
+  .axis__title{
+    font-family:var(--mono);font-size:.6875rem;font-weight:500;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--ink-3);margin:0 0 .7rem;
+  }
+
+  .formula{
+    font-family:var(--mono);font-size:.8125rem;line-height:1.9;
+    background:var(--paper-2);border-left:2px solid var(--rule);
+    padding:1.1rem 1.25rem;margin:1.75rem 0 0;overflow-x:auto;color:var(--ink-2);
+  }
+  .formula b{color:var(--ink);font-weight:500}
+  .formula span{opacity:.55}
+
+  .cal{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+  .cal__dow{
+    font-family:var(--mono);font-size:.5625rem;letter-spacing:.1em;text-transform:uppercase;
+    opacity:.4;text-align:center;padding-bottom:.3rem;
+  }
+  .cal__d{aspect-ratio:1/1;border-radius:3px}
+  .panel--paper .cal__d--empty{box-shadow:inset 0 0 0 1px #E9E5DB}
+  .panel--night .cal__d--empty{box-shadow:inset 0 0 0 1px #322F3C}
+  .cal__cap{
+    font-family:var(--mono);font-size:.625rem;letter-spacing:.08em;text-transform:uppercase;
+    opacity:.45;margin:1.1rem 0 0;
+  }
+
+  .spec{
+    background:var(--paper-2);border:1px solid var(--rule);border-radius:2px;
+    padding:clamp(1.5rem,4vw,2.5rem);margin-top:2rem;
+  }
+  .spec__prompt{
+    font-family:var(--display);font-style:italic;font-size:1.375rem;line-height:1.35;
+    color:var(--ink-2);margin:0 0 1.5rem;padding-bottom:1.25rem;
+    border-bottom:1px solid var(--rule);
+  }
+  .spec__body{font-size:1.1875rem;line-height:1.75;margin:0;max-width:52ch}
+  .spec__meta{
+    font-family:var(--mono);font-size:.625rem;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--ink-3);margin:1.5rem 0 0;display:flex;gap:1.25rem;flex-wrap:wrap;align-items:center;
+  }
+  .chip{width:11px;height:11px;border-radius:2px;display:inline-block;vertical-align:-1px;margin-right:.45rem}
+
+  .notes{display:grid;gap:1.5rem;margin-top:2rem}
+  @media(min-width:720px){.notes{grid-template-columns:1fr 1fr}}
+  .note{border-top:1px solid var(--rule);padding-top:1rem}
+  .note h3{
+    font-family:var(--mono);font-size:.6875rem;font-weight:500;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--ink-3);margin:0 0 .6rem;
+  }
+  .note p{font-size:.9375rem;line-height:1.6;margin:0;color:var(--ink-2)}
+</style>
+
+<header class="col">
+  <p class="eyebrow">Mood system &middot; draft 01</p>
+  <h1>The mood <em>field</em></h1>
+  <p class="deck">Twenty-five colours, generated rather than picked. Every entry lands somewhere on a grid of how the day sat against how much you had in you, and that coordinate becomes the day's colour for the rest of its life.</p>
+</header>
+
+<section class="col">
+  <p class="lede">Most mood apps hand you five faces on a traffic light: red is bad, green is good, and you are being graded. That reads clinical, and it flattens the difference between a heavy day you had energy for and a heavy day you slept through.</p>
+  <p>So mood is two dimensions here. <strong>Valence</strong> moves the hue along a dawn arc &mdash; night indigo, blue hour, sea green, morning amber. <strong>Energy</strong> moves saturation and weight: a spent day is barely tinted paper, a charged day is dense with pigment. No red anywhere. Nothing is scored.</p>
+</section>
+
+<section class="wide">
+  <div class="panels">
+    <div class="panel panel--paper">
+      <p class="panel__name">Paper</p>
+      <div class="grid fade" id="grid-paper"></div>
+      <p class="readout" id="read-paper">Hover a swatch</p>
+    </div>
+    <div class="panel panel--night">
+      <p class="panel__name">Night</p>
+      <div class="grid fade" id="grid-night"></div>
+      <p class="readout" id="read-night">Hover a swatch</p>
+    </div>
+  </div>
+</section>
+
+<section class="col">
+  <h2>How a colour gets made</h2>
+  <p>All twenty-five come out of two ramps in OKLCH, which keeps them perceptually even &mdash; no single swatch shouts louder than its neighbours the way it would in HSL.</p>
+
+  <div class="axis">
+    <p class="axis__title">Valence &rarr; hue</p>
+    <div class="axis__strip" id="axis-hue"></div>
+    <div class="axis__keys"><span>Heavy</span><span>Muted</span><span>Even</span><span>Warm</span><span>Bright</span></div>
+  </div>
+
+  <div class="axis">
+    <p class="axis__title">Energy &rarr; chroma + lightness</p>
+    <div class="axis__strip" id="axis-energy"></div>
+    <div class="axis__keys"><span>Spent</span><span>Slow</span><span>Steady</span><span>Lively</span><span>Charged</span></div>
+  </div>
+
+  <pre class="formula"><b>hue</b>   = [268, 243, 152, 85, 40][valence]     <span>// indigo &rarr; apricot</span>
+<b>paper</b> L = 0.930 &minus; 0.0260&middot;energy   C = 0.014 + 0.0150&middot;energy
+<b>night</b> L = 0.340 + 0.0520&middot;energy   C = 0.016 + 0.0145&middot;energy
+
+<b>colour</b> = oklch(L C hue)</pre>
+
+  <p style="margin-top:1.5rem">Chroma tops out at <code>0.074</code>. That ceiling is the whole character of the thing &mdash; high enough that twenty-five swatches stay distinct side by side, low enough that no single day ever looks like an alert.</p>
+
+  <p style="margin-top:1.5rem">Two ramps, one function, and the whole palette regenerates if we shift the arc later. It lives in <code>src/theme/moodColor.ts</code>.</p>
+</section>
+
+<section class="wide">
+  <h2 class="col" style="margin-bottom:1.25rem">A month of it</h2>
+  <p class="col" style="color:var(--ink-2)">This is the screen the app is for. Skipped days stay hollow rather than grey &mdash; an absence, not a failure.</p>
+  <div class="panels">
+    <div class="panel panel--paper">
+      <p class="panel__name">Paper</p>
+      <div class="cal" id="cal-paper"></div>
+      <p class="cal__cap">March &middot; 31 entries</p>
+    </div>
+    <div class="panel panel--night">
+      <p class="panel__name">Night</p>
+      <div class="cal" id="cal-night"></div>
+      <p class="cal__cap">March &middot; 31 entries</p>
+    </div>
+  </div>
+</section>
+
+<section class="col">
+  <h2>The writing face</h2>
+  <p>Newsreader at 19px, one long measure, generous leading. The prompt sits above the line in italic and greys back once you start typing, so the page belongs to you and not to the app.</p>
+  <div class="spec">
+    <p class="spec__prompt">What did you keep putting off today, and what was underneath it?</p>
+    <p class="spec__body">Rewrote the same paragraph four times and then went for a walk instead. It wasn't the paragraph. I think I don't want to send the thing at all, and rewriting it is a way of not deciding.</p>
+    <p class="spec__meta">
+      <span><span class="chip" style="background:oklch(0.878 0.044 243)"></span>Muted &middot; Steady</span>
+      <span>48 words</span>
+      <span>Encrypted on this device</span>
+    </p>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section class="col" style="margin-top:2.5rem">
+  <div class="notes">
+    <div class="note">
+      <h3>Colour never carries it alone</h3>
+      <p>Every cell has a text label, every calendar day an accessible name, and the timeline can be filtered by valence alone. The field is the signature, not the only channel.</p>
+    </div>
+    <div class="note">
+      <h3>Both panels are fixed here</h3>
+      <p>Paper and Night render side by side whatever theme you are reading in. This page is a specimen, so you can judge the two together; the app itself follows the system setting.</p>
+    </div>
+    <div class="note">
+      <h3>Labels are placeholders</h3>
+      <p>Heavy / Muted / Even / Warm / Bright and Spent / Slow / Steady / Lively / Charged are mine, and meant to be overwritten. The words are yours.</p>
+    </div>
+    <div class="note">
+      <h3>Next</h3>
+      <p>Approve the arc and the app scaffolds against it: entry composer first, then the timeline quilt, then the AI layer behind the proxy.</p>
+    </div>
+  </div>
+</section>
+
+<script>
+(function(){
+  var HUE=[268,243,152,85,40];
+  var VAL=["Heavy","Muted","Even","Warm","Bright"];
+  var ENE=["Spent","Slow","Steady","Lively","Charged"];
+
+  function moodColor(v,e,mode){
+    var h=HUE[v-1],L,C;
+    if(mode==="paper"){L=0.930-0.0260*(e-1);C=0.014+0.0150*(e-1);}
+    else{L=0.340+0.0520*(e-1);C=0.016+0.0145*(e-1);}
+    return "oklch("+L.toFixed(3)+" "+C.toFixed(3)+" "+h+")";
+  }
+
+  function buildGrid(id,mode,readId){
+    var g=document.getElementById(id),read=document.getElementById(readId);
+    if(!g){return;}
+    var head=document.createElement("div");
+    g.appendChild(head);
+    for(var v=1;v<=5;v++){
+      var ch=document.createElement("div");
+      ch.className="grid__colhead";
+      ch.textContent=VAL[v-1];
+      g.appendChild(ch);
+    }
+    var n=0;
+    for(var e=5;e>=1;e--){
+      var rh=document.createElement("div");
+      rh.className="grid__rowhead";
+      rh.textContent=ENE[e-1];
+      g.appendChild(rh);
+      for(var v2=1;v2<=5;v2++){
+        var c=moodColor(v2,e,mode);
+        var b=document.createElement("button");
+        b.className="sw";
+        b.type="button";
+        b.style.background=c;
+        b.style.animationDelay=(n*14)+"ms";
+        n++;
+        b.setAttribute("aria-label",VAL[v2-1]+", "+ENE[e-1]);
+        b.setAttribute("data-label",VAL[v2-1]+" · "+ENE[e-1]+"   "+c);
+        g.appendChild(b);
+      }
+    }
+    function show(ev){
+      var t=ev.target;
+      if(t&&t.getAttribute&&t.getAttribute("data-label")){
+        read.textContent=t.getAttribute("data-label");
+      }
+    }
+    g.addEventListener("mouseover",show);
+    g.addEventListener("focusin",show);
+    g.addEventListener("mouseleave",function(){read.textContent="Hover a swatch";});
+  }
+
+  buildGrid("grid-paper","paper","read-paper");
+  buildGrid("grid-night","night","read-night");
+
+  var ah=document.getElementById("axis-hue");
+  if(ah){
+    for(var v=1;v<=5;v++){
+      var d=document.createElement("div");
+      d.style.background=moodColor(v,4,"paper");
+      ah.appendChild(d);
+    }
+  }
+  var ae=document.getElementById("axis-energy");
+  if(ae){
+    for(var e=1;e<=5;e++){
+      var d2=document.createElement("div");
+      d2.style.background=moodColor(3,e,"paper");
+      ae.appendChild(d2);
+    }
+  }
+
+  var DAYS=[null,null,[3,3],[2,2],[3,4],[4,4],[2,1],
+            [2,2],[3,3],[3,2],[1,1],[2,2],[4,3],[5,5],
+            [4,4],[3,3],null,[2,2],[2,1],[3,3],[4,4],
+            [5,4],[4,5],[3,3],[2,2],null,[3,2],[3,3],
+            [4,4],[4,3],[3,3],[2,2],[3,4],[4,4],[5,5]];
+  var DOW=["M","T","W","T","F","S","S"];
+
+  function buildCal(id,mode){
+    var el=document.getElementById(id);
+    if(!el){return;}
+    for(var i=0;i<DOW.length;i++){
+      var h=document.createElement("div");
+      h.className="cal__dow";
+      h.textContent=DOW[i];
+      el.appendChild(h);
+    }
+    for(var j=0;j<DAYS.length;j++){
+      var d=DAYS[j];
+      var c=document.createElement("div");
+      c.className="cal__d"+(d?"":" cal__d--empty");
+      if(d){
+        c.style.background=moodColor(d[0],d[1],mode);
+        c.title=VAL[d[0]-1]+" · "+ENE[d[1]-1];
+      }
+      el.appendChild(c);
+    }
+  }
+  buildCal("cal-paper","paper");
+  buildCal("cal-night","night");
+})();
+</script>
